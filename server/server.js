@@ -26,12 +26,17 @@ io.on('connect',(socket)=>{
     });
     socket.on('createEmail', (createEmail)=>{
         console.log('emailCreated :',createEmail);
-    });
-    socket.emit('newMessage',{
-        from:'John',
-        messageText:'Doing good !',
-        created: new Date().getDate() +'-'+ new Date().getMonth() +'-'+ new Date().getFullYear()
     });*/
+    socket.emit('newMessage',{
+        from:'Admin',
+        messageText:'Welcome to the Chat !',
+        created: new Date().getDate() +'-'+ new Date().getMonth() +'-'+ new Date().getFullYear()
+    });
+    socket.broadcast.emit('newMessage',{
+        from:'Admin',
+        messageText:'New User added !',
+        created: new Date().getDate() +'-'+ new Date().getMonth() +'-'+ new Date().getFullYear()
+    })
     socket.on('createMessage', (message)=>{
         console.log('Message :', message);
         io.emit('newMessage',{
@@ -39,6 +44,11 @@ io.on('connect',(socket)=>{
             messageText: message.messageText,
             createdAt: new Date().getTime()
         });
+        /*socket.broadcast.emit('newMessage',{
+            from: message.from,
+            messageText: message.messageText,
+            createdAt: new Date().getTime()
+        });*/
     });
     socket.on('disconnect',()=>{
         console.log('connection closed');
