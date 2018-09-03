@@ -18,9 +18,32 @@ app.use(express.static(publicPath));
 
 io.on('connect',(socket)=>{
     console.log('New User connection');
+    /*socket.emit('newEmail',{
+        from:'myemail@gmail.com',
+        emailText:'Hello how are you doing !',
+        createdAt:'12PM',
+        to:'toEmail@gmail.com'
+    });
+    socket.on('createEmail', (createEmail)=>{
+        console.log('emailCreated :',createEmail);
+    });
+    socket.emit('newMessage',{
+        from:'John',
+        messageText:'Doing good !',
+        created: new Date().getDate() +'-'+ new Date().getMonth() +'-'+ new Date().getFullYear()
+    });*/
+    socket.on('createMessage', (message)=>{
+        console.log('Message :', message);
+        io.emit('newMessage',{
+            from: message.from,
+            messageText: message.messageText,
+            createdAt: new Date().getTime()
+        });
+    });
     socket.on('disconnect',()=>{
         console.log('connection closed');
     });
+    
 });
 
 
