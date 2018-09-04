@@ -3,6 +3,7 @@ const hbs = require('hbs');
 const path =require('path');
 const socketIO = require('socket.io');
 const http = require('http');
+const {generateMessage} = require('./utils/message');
 
 const port = process.env.PORT || 3000;
 var app = express();
@@ -18,38 +19,19 @@ app.use(express.static(publicPath));
 
 io.on('connect',(socket)=>{
     console.log('New User connection');
-    /*socket.emit('newEmail',{
-        from:'myemail@gmail.com',
-        emailText:'Hello how are you doing !',
-        createdAt:'12PM',
-        to:'toEmail@gmail.com'
-    });
-    socket.on('createEmail', (createEmail)=>{
-        console.log('emailCreated :',createEmail);
-    });*/
-    socket.emit('newMessage',{
-        from:'Admin',
-        messageText:'Welcome to the Chat !',
-        created: new Date().getDate() +'-'+ new Date().getMonth() +'-'+ new Date().getFullYear()
-    });
-    socket.broadcast.emit('newMessage',{
-        from:'Admin',
-        messageText:'New User added !',
-        created: new Date().getDate() +'-'+ new Date().getMonth() +'-'+ new Date().getFullYear()
-    })
-    socket.on('createMessage', (message)=>{
+
+    // Broadcast welcome message from Admin to the User
+    socket.emit('newMessage', generateMessage('Admin','Welcome to the Chat !'));
+    // Broadcast welcome message from Admin to all Users
+    socket.broadcast.emit('newMessage', generateMessage('Admin','New User added !'));
+
+    // Create a message on emit from client 
+    socket.on('createMessage', (message, callback)=>{
         console.log('Message :', message);
-        io.emit('newMessage',{
-            from: message.from,
-            messageText: message.messageText,
-            createdAt: new Date().getTime()
-        });
-        /*socket.broadcast.emit('newMessage',{
-            from: message.from,
-            messageText: message.messageText,
-            createdAt: new Date().getTime()
-        });*/
+        io.emit('newMessage', generateMessage(message.from, message.messageText));
+        callback("this is from the server.");
     });
+
     socket.on('disconnect',()=>{
         console.log('connection closed');
     });
@@ -59,10 +41,6 @@ io.on('connect',(socket)=>{
 
 
 app.get('/',(req, res)=>{
-    /*res.render('home.hbs',{
-        pageTitle: 'Home Page',
-        welcomeMessage: 'Welcome to the Site !!!'
-    });*/
     res.send('welcome to chat app');
   });
 
