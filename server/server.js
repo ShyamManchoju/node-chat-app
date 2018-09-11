@@ -26,8 +26,15 @@ io.on('connect',(socket)=>{
 
     //Join room 
     socket.on('join', (params, callback)=>{
+        
+        var usersExist = users.getUserAvailability(params);
+        
         if(!isRealString(params.name) || !isRealString(params.room)){
             callback("Please provide valid Name and Room info.");
+        }
+        
+        if( usersExist.length > 0){
+            callback("User Name already exists.");
         }
 
         // To join the specified room 
@@ -41,7 +48,7 @@ io.on('connect',(socket)=>{
         //socket.emit();
         // Broadcast welcome message from Admin to the User
         io.to(params.room).emit('updateUserList', users.getUserList(params.room));
-        socket.emit('newMessage', generateMessage('Admin','Welcome to the Chat !'));
+        socket.emit('newMessage', generateMessage('Admin',`Welcome to the ${params.room} Chat !`));
         // Broadcast welcome message from Admin to all Users except for user
         socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin',`${params.name} has joined`));
 

@@ -27,6 +27,12 @@ class Users{
         var namesArray = users.map((user) => user.name);
         return namesArray;
     }
+
+    getUserAvailability(params){
+        console.log('USer List :',this.users);
+        console.log('params :', params);
+        return this.users.filter((user)=> (user.name === params.name && user.room === params.room));
+    }
 }
 
 //addUser(id,name,room)
