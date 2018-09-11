@@ -1,4 +1,4 @@
-<!DOCTYPE hyml>
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -18,13 +18,20 @@
                 </div>
                 <div class="form-field">
                     <label>Room Name</label>
-                    <input type="text" name="room" autofocus/>
+                    <select name="room">
+                        {{#each roomsList}}
+                            <option value="{{id}}" >{{name}}</option>
+                        {{/each}}
+                    </select>
                 </div>
                 <div class="form-field">
                     <button>Join</button>
                 </div>
             </form>
         </div>
- 
+        <script src="/js/libs/jquery-3.3.1.min.js"></script>
+        <script src="/js/libs/moment.js"></script>
+        <script src="/js/libs/mustache.js"></script>
+        <script src="/js/libs/deparam.js"></script>
     </body>
 </html>

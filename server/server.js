@@ -6,6 +6,7 @@ const http = require('http');
 const {generateMessage, generateLocationMessage} = require('./utils/message');
 const {isRealString} = require('./utils/validation');
 const {Users} = require('./utils/users');
+const {Rooms} = require('./utils/rooms');
 
 
 const port = process.env.PORT || 3000;
@@ -13,12 +14,11 @@ var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
 var users = new Users();
-
-hbs.registerPartials(__dirname + '/views/partials');
-app.set('view engine','hbs');
+var rooms = new Rooms();
 
 const publicPath =path.join(__dirname, '../public');
-
+hbs.registerPartials(__dirname + '/views/partials');
+app.set('view engine','hbs');
 app.use(express.static(publicPath));
 
 io.on('connect',(socket)=>{
@@ -56,7 +56,7 @@ io.on('connect',(socket)=>{
         }
        
         callback();
-    });
+    });   
 
     socket.on('createLocationMessage', (coords)=>{
         var user = users.getUser(socket.id);
@@ -76,9 +76,10 @@ io.on('connect',(socket)=>{
 });
 
 
-
-app.get('/',(req, res)=>{
-    res.send('welcome to chat app');
+app.get('/',(req, res)=>{   
+    //var params = jQuery.deparam(window.location.search);
+    var roomsList = rooms.getRooms();
+    res.render('home.hbs', {roomsList});
   });
 
 server.listen(port,()=>{
